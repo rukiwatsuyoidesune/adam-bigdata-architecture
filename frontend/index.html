@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FoodFlow Analytics</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 25px 40px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header p {
+            margin-bottom: 0;
+            color: #d1d5db;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+        .card {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.06);
+        }
+
+        .card-value {
+
+            font-size: 36px;
+
+            font-weight: bold;
+
+            margin-bottom: 5px;
+        }
+
+        .card-label {
+
+            color: #6b7280;
+        }
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+        .panel {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.06);
+        }
+
+        .bar {
+
+            margin-bottom: 15px;
+        }
+
+        .bar-label {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 5px;
+        }
+
+        .bar-background {
+
+            height: 20px;
+
+            background: #e5e7eb;
+
+            border-radius: 5px;
+
+            overflow: hidden;
+        }
+
+        .bar-fill {
+
+            height: 100%;
+
+            background: #2563eb;
+        }
+
+        .word-cloud {
+
+            min-height: 200px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+
+            padding: 20px;
+        }
+
+        .word {
+
+            font-weight: bold;
+
+            color: #2563eb;
+        }
+
+        .search {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.06);
+        }
+
+        .search-row {
+
+            display: flex;
+
+            gap: 10px;
+        }
+
+        .search input {
+
+            flex: 1;
+
+            padding: 12px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 6px;
+
+            font-size: 16px;
+
+            box-sizing: border-box;
+        }
+
+        button {
+
+            padding: 12px 22px;
+
+            background: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+
+            border-top: 1px solid #e5e7eb;
+
+            padding: 15px 0;
+        }
+
+        .result strong {
+            color: #111827;
+        }
+
+        .muted {
+            color: #6b7280;
+        }
+
+        @media (max-width: 750px) {
+
+            .cards,
+            .grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .search-row {
+
+                flex-direction: column;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>FoodFlow Analytics</h1>
+
+    <p>
+        Big Data Restaurant Order Analytics
+    </p>
+
+</header>
+
+
+<main>
+
+
+    <!-- KPI CARDS -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div
+                id="totalOrders"
+                class="card-value"
+            >
+                -
+            </div>
+
+            <div class="card-label">
+                Total Orders
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div
+                id="totalRestaurants"
+                class="card-value"
+            >
+                -
+            </div>
+
+            <div class="card-label">
+                Restaurants
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div
+                id="totalCategories"
+                class="card-value"
+            >
+                -
+            </div>
+
+            <div class="card-label">
+                Categories
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- AGGREGATIONS -->
+
+    <div class="grid">
+
+
+        <div class="panel">
+
+            <h2>
+                Orders by Restaurant
+            </h2>
+
+            <div id="restaurantChart"></div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <h2>
+                Orders by Category
+            </h2>
+
+            <div id="categoryChart"></div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- WORD CLOUD -->
+
+    <div class="panel">
+
+        <h2>
+            Order Description Word Cloud
+        </h2>
+
+        <p class="muted">
+            Most frequently used words in customer
+            order descriptions.
+        </p>
+
+        <div
+            id="wordCloud"
+            class="word-cloud"
+        ></div>
+
+    </div>
+
+    <div class="search">
+
+    <h2>
+        Add New Order
+    </h2>
+
+    <p class="muted">
+        Create a new restaurant order and send it
+        through the Big Data pipeline.
+    </p>
+
+    <div style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 15px;
+    ">
+
+        <input
+            id="customerId"
+            type="number"
+            placeholder="Customer ID"
+            value=""
+        >
+
+        <input
+            id="restaurantId"
+            type="number"
+            placeholder="Restaurant ID"
+            value=""
+        >
+
+        <input
+            id="menuItemId"
+            type="number"
+            placeholder="Menu Item ID"
+            value=""
+        >
+
+        <input
+            id="quantity"
+            type="number"
+            placeholder="Quantity"
+            value=""
+            min="1"
+        >
+
+    </div>
+
+    <input
+        id="description"
+        type="text"
+        placeholder="Order description..."
+        style="
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        "
+    >
+
+    <button
+        id="addOrderButton"
+    >
+        Add Order
+    </button>
+
+    <div
+        id="orderMessage"
+        style="margin-top: 15px;"
+    ></div>
+
+</div>
+
+
+
+    <!-- SEARCH -->
+
+    <div class="search">
+
+        <h2>
+            Search Orders
+        </h2>
+
+        <p class="muted">
+            Search by customer, restaurant,
+            menu item, or order description.
+        </p>
+
+        <div class="search-row">
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Try: cheese, spicy, Burger House..."
+            >
+
+            <button
+                id="searchButton"
+            >
+                Search
+            </button>
+
+        </div>
+
+        <div id="searchResults"></div>
+
+    </div>
+
+
+</main>
+
+
+<script>
+
+const API = "http://localhost:8000";
+
+
+async function loadAnalytics() {
+
+    const response =
+        await fetch(`${API}/api/analytics`);
+
+    const data =
+        await response.json();
+
+
+    document
+        .getElementById("totalOrders")
+        .textContent =
+        data.total_orders;
+
+
+    document
+        .getElementById("totalRestaurants")
+        .textContent =
+        data.orders_by_restaurant.length;
+
+
+    document
+        .getElementById("totalCategories")
+        .textContent =
+        data.orders_by_category.length;
+
+
+    renderBars(
+        "restaurantChart",
+        data.orders_by_restaurant
+    );
+
+
+    renderBars(
+        "categoryChart",
+        data.orders_by_category
+    );
+
+}
+
+
+function renderBars(
+    elementId,
+    data
+) {
+
+    const container =
+        document.getElementById(elementId);
+
+    container.innerHTML = "";
+
+
+    if (data.length === 0) {
+
+        container.innerHTML =
+            "<p>No data available.</p>";
+
+        return;
+
+    }
+
+
+    const max =
+        Math.max(
+            ...data.map(
+                item => item.count
+            )
+        );
+
+
+    data.forEach(item => {
+
+        const width =
+            (item.count / max) * 100;
+
+
+        const element =
+            document.createElement("div");
+
+        element.className = "bar";
+
+
+        element.innerHTML = `
+
+            <div class="bar-label">
+
+                <span>
+                    ${item.name}
+                </span>
+
+                <strong>
+                    ${item.count}
+                </strong>
+
+            </div>
+
+            <div class="bar-background">
+
+                <div
+                    class="bar-fill"
+                    style="width: ${width}%"
+                ></div>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(element);
+
+    });
+
+}
+
+
+async function loadWordCloud() {
+
+    const response =
+        await fetch(
+            `${API}/api/wordcloud`
+        );
+
+    const words =
+        await response.json();
+
+
+    const container =
+        document.getElementById(
+            "wordCloud"
+        );
+
+    container.innerHTML = "";
+
+
+    if (words.length === 0) {
+
+        container.innerHTML =
+            "<p>No words available.</p>";
+
+        return;
+
+    }
+
+
+    const max =
+        Math.max(
+            ...words.map(
+                word => word.count
+            )
+        );
+
+
+    words.forEach(item => {
+
+        const element =
+            document.createElement("span");
+
+        element.className = "word";
+
+
+        const size =
+            14 +
+            (item.count / max) * 30;
+
+
+        element.style.fontSize =
+            `${size}px`;
+
+
+        element.textContent =
+            item.word;
+
+
+        element.title =
+            `${item.count} occurrence(s)`;
+
+
+        container.appendChild(element);
+
+    });
+
+}
+
+
+async function searchOrders() {
+
+    const query =
+        document
+            .getElementById("searchInput")
+            .value
+            .trim();
+
+
+    if (!query) {
+
+        document
+            .getElementById("searchResults")
+            .innerHTML =
+            "<p class='muted'>Enter a search term.</p>";
+
+        return;
+
+    }
+
+
+    const response =
+        await fetch(
+            `${API}/api/search?q=${encodeURIComponent(query)}`
+        );
+
+
+    const results =
+        await response.json();
+
+
+    const container =
+        document.getElementById(
+            "searchResults"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (results.length === 0) {
+
+        container.innerHTML =
+            "<p class='muted'>No orders found.</p>";
+
+        return;
+
+    }
+
+
+    results.forEach(order => {
+
+        const result =
+            document.createElement("div");
+
+        result.className =
+            "result";
+
+
+        result.innerHTML = `
+
+            <strong>
+                Order #${order.order_id}
+            </strong>
+
+            <p>
+                <strong>Customer:</strong>
+                ${order.customer}
+            </p>
+
+            <p>
+                <strong>Restaurant:</strong>
+                ${order.restaurant}
+            </p>
+
+            <p>
+                <strong>Menu:</strong>
+                ${order.menu_item}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                ${order.description}
+            </p>
+
+        `;
+
+
+        container.appendChild(result);
+
+    });
+
+}
+
+
+document
+    .getElementById("searchButton")
+    .addEventListener(
+        "click",
+        searchOrders
+    );
+
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+                searchOrders();
+            }
+
+        }
+    );
+
+async function addOrder() {
+
+    const customerId =
+        Number(
+            document.getElementById("customerId").value
+        );
+
+    const restaurantId =
+        Number(
+            document.getElementById("restaurantId").value
+        );
+
+    const menuItemId =
+        Number(
+            document.getElementById("menuItemId").value
+        );
+
+    const quantity =
+        Number(
+            document.getElementById("quantity").value
+        );
+
+    const description =
+        document.getElementById("description").value.trim();
+
+
+    if (
+        !customerId ||
+        !restaurantId ||
+        !menuItemId ||
+        !quantity ||
+        !description
+    ) {
+
+        document.getElementById(
+            "orderMessage"
+        ).innerHTML =
+            `<span style="color: #dc2626;">
+                Please fill in all fields.
+            </span>`;
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/api/orders`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        customer_id: customerId,
+                        restaurant_id: restaurantId,
+                        menu_item_id: menuItemId,
+                        quantity: quantity,
+                        description: description
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Failed to create order"
+            );
+
+        }
+
+
+        document.getElementById(
+            "orderMessage"
+        ).innerHTML = `
+
+            <span style="color: #16a34a;">
+
+                ✓ Order #${data.order_id}
+                created successfully.
+
+            </span>
+
+            <br>
+
+            <span class="muted">
+
+                The order has been inserted into
+                PostgreSQL and is now entering the
+                CDC pipeline.
+
+            </span>
+
+        `;
+
+
+        document.getElementById(
+            "description"
+        ).value = "";
+
+
+        // Refresh dashboard after a short delay
+        setTimeout(() => {
+
+            loadAnalytics();
+            loadWordCloud();
+
+        }, 2000);
+
+
+    } catch (error) {
+
+        document.getElementById(
+            "orderMessage"
+        ).innerHTML = `
+
+            <span style="color: #dc2626;">
+
+                ✗ ${error.message}
+
+            </span>
+
+        `;
+
+    }
+
+}
+
+
+document
+    .getElementById("addOrderButton")
+    .addEventListener(
+        "click",
+        addOrder
+    );
+
+
+
+loadAnalytics();
+loadWordCloud();
+
+</script>
+
+
+</body>
+
+</html>

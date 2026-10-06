@@ -1,0 +1,24 @@
+{
+  "name": "foodflow-postgres",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "foodflow",
+    "database.password": "foodflow",
+    "database.dbname": "foodflow",
+
+    "topic.prefix": "foodflow",
+
+    "plugin.name": "pgoutput",
+
+    "publication.autocreate.mode": "filtered",
+
+    "table.include.list": "public.orders,public.customers,public.restaurants,public.menu_items",
+
+    "slot.name": "foodflow_slot",
+
+    "snapshot.mode": "initial"
+  }
+}
